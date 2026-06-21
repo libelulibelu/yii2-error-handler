@@ -1,5 +1,5 @@
 {
-  "name": "libelulasoft/yii2-error-handler",
+  "name": "libelulibelu/yii2-error-handler",
   "description": "Error handler for mongo databases",
   "type": "yii2-extension",
   "keywords": [
@@ -14,12 +14,12 @@
     }
   ],
   "require": {
-    "php": ">=7.0.0",
-    "yiisoft/yii2": "~2.0.41",
-    "mongodb/mongodb": "^1.8.0",
-    "yiisoft/yii2-mongodb": "^2.0",
-    "libelulasoft/yii2-common-helpers": "^1.0",
-    "symfony/mailer": "^6.0"
+    "php": ">=8.2",
+    "yiisoft/yii2": "~2.0.54",
+    "mongodb/mongodb": "^2.3",
+    "yiisoft/yii2-mongodb": "^3.0",
+    "symfony/mailer": "^7.4.12",
+    "libelulibelu/yii2-common-helpers": "~1.0"
   },
   "repositories": [
     {
@@ -29,7 +29,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Libelulasoft\\ErrorHandler\\": "src"
+      "Libelula\\ErrorHandler\\": "src"
     }
   },
   "config": {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Libelulasoft\ErrorHandler\interfaces;
+namespace Libelula\ErrorHandler\interfaces;
 
 interface ConfigRecord
 {

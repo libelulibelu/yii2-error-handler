@@ -1,10 +1,10 @@
 <?php
 
-namespace Libelulasoft\ErrorHandler;
+namespace Libelula\ErrorHandler;
 
-use Libelulasoft\ErrorHandler\exceptions\MessageException;
-use Libelulasoft\ErrorHandler\interfaces\ConfigRecord;
-use Libelulasoft\ErrorHandler\utils\Handler;
+use Libelula\ErrorHandler\exceptions\MessageException;
+use Libelula\ErrorHandler\interfaces\ConfigRecord;
+use Libelula\ErrorHandler\utils\Handler;
 use Yii;
 use yii\web\ErrorHandler as WebErrorHandler;
 
@@ -26,7 +26,7 @@ class ErrorHandler extends WebErrorHandler
   /** @var string|null */
   public $configClass = null;
 
-  /** @var \Libelulasoft\ErrorHandler\utils\Handler */
+  /** @var \Libelula\ErrorHandler\utils\Handler */
   public $handler;
 
   /** @var string */

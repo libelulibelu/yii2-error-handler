@@ -1,6 +1,6 @@
 <?php
 
-namespace Libelulasoft\ErrorHandler\exceptions;
+namespace Libelula\ErrorHandler\exceptions;
 
 interface DataException
 {

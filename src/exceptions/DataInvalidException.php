@@ -1,8 +1,8 @@
 <?php
 
-namespace Libelulasoft\ErrorHandler\exceptions;
+namespace Libelula\ErrorHandler\exceptions;
 
-use Libelulasoft\CommonHelpers\RequestHelpers;
+use Libelula\CommonHelpers\RequestHelpers;
 use yii\base\Model;
 use yii\web\HttpException;
 

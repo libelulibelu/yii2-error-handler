@@ -1,6 +1,6 @@
 <?php
 
-namespace Libelulasoft\ErrorHandler\utils;
+namespace Libelula\ErrorHandler\utils;
 
 use Yii;
 

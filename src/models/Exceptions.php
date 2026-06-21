@@ -1,9 +1,9 @@
 <?php
 
-namespace Libelulasoft\ErrorHandler\models;
+namespace Libelula\ErrorHandler\models;
 
-use Libelulasoft\CommonHelpers\Utils;
-use Libelulasoft\ErrorHandler\ErrorHandler;
+use Libelula\CommonHelpers\Utils;
+use Libelula\ErrorHandler\ErrorHandler;
 use Yii;
 use yii\mongodb\ActiveRecord;
 

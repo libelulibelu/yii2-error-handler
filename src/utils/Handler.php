@@ -1,13 +1,13 @@
 <?php
 
-namespace Libelulasoft\ErrorHandler\utils;
+namespace Libelula\ErrorHandler\utils;
 
 use Error;
 use Exception;
-use Libelulasoft\ErrorHandler\exceptions\DataException;
-use Libelulasoft\ErrorHandler\exceptions\MetadataException;
-use Libelulasoft\ErrorHandler\interfaces\LoggerHandler;
-use Libelulasoft\ErrorHandler\models\Exceptions;
+use Libelula\ErrorHandler\exceptions\DataException;
+use Libelula\ErrorHandler\exceptions\MetadataException;
+use Libelula\ErrorHandler\interfaces\LoggerHandler;
+use Libelula\ErrorHandler\models\Exceptions;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
@@ -155,7 +155,7 @@ class Handler
 
   private function loggerInfo(): ?array
   {
-    /** @var \Libelulasoft\ErrorHandler\ErrorHandler */
+    /** @var \Libelula\ErrorHandler\ErrorHandler */
     $errorHandler = Yii::$app->errorHandler;
 
     if (empty($errorHandler->loggerComponent)) {
