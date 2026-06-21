@@ -21,6 +21,9 @@
     "symfony/mailer": "^7.4.12",
     "libelulibelu/yii2-common-helpers": "~1.0"
   },
+  "require-dev": {
+    "phpunit/phpunit": "^11.5 || ^12"
+  },
   "repositories": [
     {
       "type": "composer",
@@ -31,6 +34,21 @@
     "psr-4": {
       "Libelula\\ErrorHandler\\": "src"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Libelula\\ErrorHandler\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit",
+    "install-hooks": "git config core.hooksPath .githooks || true",
+    "post-install-cmd": [
+      "@install-hooks"
+    ],
+    "post-update-cmd": [
+      "@install-hooks"
+    ]
   },
   "config": {
     "allow-plugins": {
