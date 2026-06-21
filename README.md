@@ -24,7 +24,7 @@ to the require section of your `composer.json` file.
 
 Si se quiere migrar de la version `taguz91/yii2-error-handler` a la nueva version `libelulibelu/yii2-error-handler` se debe seguir los siguientes pasos:
 
-1. Seguir la guia de migracion para [yii2-common-helpers](https://github.com/libelulasoftec/yii2-common-helpers).
+1. Seguir la guia de migracion para [yii2-common-helpers](https://github.com/libelulibelu/yii2-common-helpers).
 
 2. Eliminar la version actual
 
@@ -35,7 +35,7 @@ composer remove taguz91/yii2-error-handler
 3. Instalar la nueva version
 
 ```
-composer require libelulasoft/yii2-error-handler
+composer require libelulibelu/yii2-error-handler
 ```
 
 4. Se debe cambiar el namespace `taguz91\ErrorHandler` a `Libelula\ErrorHandler` en todo el proyecto.
