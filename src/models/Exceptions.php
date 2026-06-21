@@ -8,19 +8,24 @@ use Yii;
 use yii\mongodb\ActiveRecord;
 
 /**
+ * MongoDB ActiveRecord that persists handled exceptions in the `exceptions`
+ * collection.
  *
  * @property \MongoDB\BSON\UTCDateTime $createdAt
  * @property string $date
  * @property string $exception
  * @property array $response
- * @property string $empCodigo
+ * @property string $empCodigo Company identifier.
  * @property string $currentUrl
- * @property <string, string> $user
+ * @property array{_id: ?string, ip: string, host: string, agent: string, body?: array} $user
  * @property string $method
  */
 class Exceptions extends ActiveRecord
 {
 
+  /**
+   * @inheritdoc
+   */
   public static function getDb()
   {
     /** @var ErrorHandler */
@@ -40,7 +45,7 @@ class Exceptions extends ActiveRecord
   /**
    * @inheritdoc
    */
-  public static function collectionName()
+  public static function collectionName(): string
   {
     return 'exceptions';
   }
@@ -48,7 +53,7 @@ class Exceptions extends ActiveRecord
   /**
    * @inheritdoc
    */
-  public function attributes()
+  public function attributes(): array
   {
     return [
       '_id',
@@ -66,7 +71,7 @@ class Exceptions extends ActiveRecord
   /**
    * @inheritdoc
    */
-  public function rules()
+  public function rules(): array
   {
     return [
       [$this->attributes(), 'safe']
@@ -74,15 +79,20 @@ class Exceptions extends ActiveRecord
   }
 
   /**
-   * @param (array|mixed)[] $response
+   * Persists a handled exception together with the current request context.
+   *
+   * @param string $company Company identifier stored in the `empCodigo` field.
+   * @param string $exception Fully qualified class name of the exception.
+   * @param (array|mixed)[] $response Normalized response data to store.
+   * @return Exceptions The saved record.
    */
   public static function store(
-    string $empCodigo,
+    string $company,
     string $exception,
     array $response
   ): Exceptions {
     $exc = new Exceptions();
-    $exc->empCodigo = $empCodigo;
+    $exc->empCodigo = $company;
     $exc->createdAt = Utils::getNowMongo();
     $exc->date = Utils::getNow();
     $exc->exception = $exception;

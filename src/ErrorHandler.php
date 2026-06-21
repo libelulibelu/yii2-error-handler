@@ -9,51 +9,55 @@ use Yii;
 use yii\web\ErrorHandler as WebErrorHandler;
 
 /**
+ * Application error handler that converts exceptions into a normalized array
+ * response, optionally persists them to MongoDB and notifies by email.
  *
+ * Configure it as the `errorHandler` component of the Yii application. See the
+ * public properties below for the available configuration options.
  */
 class ErrorHandler extends WebErrorHandler
 {
 
-  /** @var string - Database connection name */
+  /** @var string Name of the MongoDB connection component used to store exceptions. */
   public $bdConnection = 'mongodb';
 
-  /** @var string */
+  /** @var string Name of the logger component implementing {@see \Libelula\ErrorHandler\interfaces\LoggerHandler}; empty to disable. */
   public $loggerComponent = '';
 
-  /** @var string */
+  /** @var string Configuration code used to fetch the email settings from the config class. */
   public $emailConfig = 'EMAIL_ERROR_NOTIFICATION';
 
-  /** @var string|null */
+  /** @var string|null Fully qualified config class implementing {@see \Libelula\ErrorHandler\interfaces\ConfigRecord}. */
   public $configClass = null;
 
-  /** @var \Libelula\ErrorHandler\utils\Handler */
+  /** @var \Libelula\ErrorHandler\utils\Handler Utility that builds the response and handles persistence/notification. */
   public $handler;
 
-  /** @var string */
-  public $empresa;
+  /** @var string Company identifier stored with each persisted exception. */
+  public $company;
 
-  /** @var string[] Classname for exception to not save */
+  /** @var string[] Exception class names that must not be saved nor notified. */
   public $exceptionsNotSave = [
     MessageException::class,
   ];
 
-  /** @var bool */
+  /** @var bool Whether exceptions should be persisted to the database. */
   public $saveError = false;
 
-  /** @var bool */
-  public $notificate = false;
+  /** @var bool Whether an email notification should be sent for the exception. */
+  public $notify = false;
 
-  /** @var bool */
+  /** @var bool Whether to include the exception trace/meta in the response. */
   public $showTrace = YII_DEBUG;
 
-  /** @var bool */
+  /** @var bool Whether to store the POST body alongside the persisted exception. */
   public $saveBody = YII_DEBUG;
 
   public function init()
   {
     parent::init();
     if ($this->handler === null) {
-      $this->handler = new Handler($this->empresa);
+      $this->handler = new Handler($this->company);
     }
   }
 
@@ -72,7 +76,7 @@ class ErrorHandler extends WebErrorHandler
     $saveError = $this->saveError;
     if (in_array(get_class($exception), $this->exceptionsNotSave)) {
       $saveError = false;
-      $this->notificate = false;
+      $this->notify = false;
     }
 
     $finalResponse = $this->handler->get(
@@ -81,16 +85,22 @@ class ErrorHandler extends WebErrorHandler
       $this->showTrace
     );
 
-    $notificated = $this->notificate();
-    Yii::debug($notificated, __METHOD__);
+    $notified = $this->notify();
+    Yii::debug($notified, __METHOD__);
 
     return $finalResponse;
   }
 
-  private function notificate(): bool
+  /**
+   * Sends the email notification for the current exception when enabled and a
+   * valid config class is available.
+   *
+   * @return bool Whether a notification was actually sent.
+   */
+  private function notify(): bool
   {
     if (
-      $this->notificate
+      $this->notify
       && class_exists($this->configClass)
     ) {
       $className = $this->configClass;
@@ -102,7 +112,7 @@ class ErrorHandler extends WebErrorHandler
       );
 
       if ($config) {
-        return $this->handler->notificate(
+        return $this->handler->notify(
           $config
         );
       }

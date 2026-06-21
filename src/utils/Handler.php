@@ -12,29 +12,36 @@ use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
 
+/**
+ * Builds the normalized error response for an exception, optionally persisting
+ * it to the database and triggering an email notification.
+ */
 class Handler
 {
 
-  /** @var Exception|Error */
+  /** @var Exception|Error The exception currently being processed. */
   private $_exception;
 
-  /** @var Notification */
+  /** @var Notification Helper used to dump request data and send notifications. */
   private $notification;
 
-  /** @var integer */
+  /** @var int Code of the current exception. */
   private $_code;
 
-  /** @var string */
-  public $empresa;
+  /** @var string Company identifier stored with each persisted exception. */
+  public $company;
 
-  public function __construct(string $empresa)
+  public function __construct(string $company)
   {
-    $this->empresa = $empresa;
+    $this->company = $company;
     $this->notification = new Notification();
   }
 
   /**
-   * @param Exception|Error
+   * Stores the exception being processed and caches its code.
+   *
+   * @param Exception|Error $exception
+   * @return void
    */
   private function init($exception)
   {
@@ -43,8 +50,12 @@ class Handler
   }
 
   /**
-   * @param Exception|Error
-   * Return de error to store into database
+   * Builds the error response, persisting it to the database when requested.
+   *
+   * @param Exception|Error $exception The exception to process.
+   * @param bool $saveError Whether the exception must be stored in the database.
+   * @param bool $showTrace Whether the response must include the meta/trace data.
+   * @return array The error response to return to the client.
    */
   public function get(
     $exception,
@@ -54,7 +65,7 @@ class Handler
     $this->init($exception);
     switch ($this->_code) {
       case 401:
-        $response = $this->unathorized();
+        $response = $this->unauthorized();
         break;
 
       case 1001:
@@ -68,7 +79,7 @@ class Handler
 
     if ($saveError) {
       $record = Exceptions::store(
-        $this->empresa,
+        $this->company,
         get_class($this->_exception),
         ArrayHelper::merge($response, [
           'meta' => $this->meta()
@@ -90,7 +101,13 @@ class Handler
     return $response;
   }
 
-  public function notificate(array $emailConfig): bool
+  /**
+   * Sends the email notification for the current exception.
+   *
+   * @param array $emailConfig Email settings used to deliver the notification.
+   * @return bool Whether the notification was sent successfully.
+   */
+  public function notify(array $emailConfig): bool
   {
     $uidAction = Yii::$app->controller->action->getUniqueId();
     return $this->notification->send(
@@ -99,7 +116,12 @@ class Handler
     );
   }
 
-  private function unathorized()
+  /**
+   * Builds the response for unauthorized (HTTP 401) errors.
+   *
+   * @return array
+   */
+  private function unauthorized()
   {
     return [
       'transaccion' => false,
@@ -107,11 +129,17 @@ class Handler
     ];
   }
 
+  /**
+   * Builds the response for generic errors, merging extra data when the
+   * exception implements {@see DataException}.
+   *
+   * @return array
+   */
   private function common(): array
   {
     $error = [
       'transaccion' => false,
-      'errorDescripcion' => Yii::t('app', 'A error ocurrend when process your request.'),
+      'errorDescripcion' => Yii::t('app', 'An error occurred while processing your request.'),
       'rawError' => $this->_exception->getMessage(),
     ];
 
@@ -122,6 +150,12 @@ class Handler
     return $error;
   }
 
+  /**
+   * Builds the response for message exceptions (HTTP 400 / code 1001),
+   * exposing the exception message directly.
+   *
+   * @return array
+   */
   private function message(): array
   {
     return [
@@ -130,6 +164,12 @@ class Handler
     ];
   }
 
+  /**
+   * Collects metadata about the exception (class, file, line, trace, logger and
+   * any data provided by {@see MetadataException}).
+   *
+   * @return array
+   */
   private function meta(): array
   {
     $exception = $this->_exception;
@@ -153,6 +193,13 @@ class Handler
     return $meta;
   }
 
+  /**
+   * Returns the request info exposed by the configured logger component, or
+   * null when no logger is configured or it does not implement
+   * {@see LoggerHandler}.
+   *
+   * @return array|null
+   */
   private function loggerInfo(): ?array
   {
     /** @var \Libelula\ErrorHandler\ErrorHandler */

@@ -47,7 +47,9 @@ composer require libelulasoft/yii2-error-handler
 - **showTrace** booleano que nos indica si debemos mostrar le trace en la response, por defecto utiliza la constante YII_DEBUG
 - **saveBody** booleano que nos indica si debemos guardar los datos enviados por _post_ en la excepcion, por defecto se utiliza la constante YII_DEBUG
 
-6. Probamos que todo funcione de forma correcta.
+6. Las opciones de configuracion `empresa` y `notificate` fueron renombradas a `company` y `notify` respectivamente. Se deben actualizar en la configuracion del componente `errorHandler`.
+
+7. Probamos que todo funcione de forma correcta.
 
 ## Usage
 
@@ -64,10 +66,10 @@ Once the extension is installed, simply use it in your code by:
     'loggerComponent' => '', // empty when the logger handler not exists
     'emailConfig' => 'EMAIL_ERROR_NOTIFICATION', // configuration for email
     'configClass' => '/common/models/Configuration', // debe implementar interface config
-    'empresa' => $_GET['empresa'] ?? 'undefined',
+    'company' => $_GET['empresa'] ?? 'undefined',
     'bdConnection' => 'mongodb',
     'saveError' => true,
-    'notificate' => true,
+    'notify' => true,
     'showTrace' => YII_DEBUG,
     'saveBody' => YII_DEBUG,
     // This exceptions not be save into database
